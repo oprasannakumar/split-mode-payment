@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Monthly Transaction</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{font-family:Arial;background:#f5f5f5;padding:20px}
+form{background:#fff;padding:20px;border-radius:8px;max-width:460px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+label{font-weight:bold;margin-top:10px;display:block}
+input,select,button{
+  width:100%;height:42px;padding:8px;margin-top:5px;
+  border-radius:4px;border:1px solid #ccc;box-sizing:border-box
+}
+button{background:#007bff;color:#fff;border:none;margin-top:15px}
+button:hover{background:#0056b3}
+hr{margin:20px 0}
+
+/* Split rows */
+.payment-row{
+  border:1px solid #ddd;
+  padding:10px;
+  border-radius:6px;
+  margin-top:10px
+}
+.row{
+  display:grid;
+  grid-template-columns: 1.3fr 1.6fr 1fr 42px;
+  gap:6px;
+}
+.remove-btn{
+  background:#dc3545;
+  width:42px;
+  height:42px;
+  padding:0;
+  margin:5px 0 0 0;
+  line-height:42px;
+  font-size:18px;
+}
+.add-btn{background:#28a745}
+.total{font-weight:bold;margin-top:10px;text-align:right}
+
+/* Cash */
+#cashBox{display:none;margin-top:15px}
+#denominations{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px
+}
+.denom{
+  border:1px solid #ccc;
+  border-radius:6px;
+  padding:8px;
+  text-align:center;
+  font-weight:bold
+}
+.denom input{margin-top:5px;text-align:center;height:36px}
+.cash-disabled{background:#f0f0f0;pointer-events:none}
+</style>
+</head>
+
+<body>
+
+<form id="form">
+
+<h2 style="text-align:center">Monthly Transaction</h2>
+
+<label>Date</label>
+<input type="date" id="date">
+
+<label>Narration</label>
+<input id="narration">
+
+<label>Bill No (Optional)</label>
+<input id="billNo">
+
+<label>Purpose</label>
+<select id="purpose">
+  <option value="">Select</option>
+  <option>Food</option>
+  <option>Grocery</option>
+  <option>Travel</option>
+  <option>Other</option>
+</select>
+<input id="purposeOther" placeholder="Enter purpose" style="display:none">
+
+<label>Spent For / Earned By</label>
+<select id="spentFor">
+  <option value="">Select</option>
+  <option>Self</option>
+  <option>House</option>
+  <option>Mother</option>
+  <option>Father</option>
+  <option>Family</option>
+  <option>Vasavi</option>
+  <option>Other</option>
+</select>
+<input id="spentOther" placeholder="Enter name" style="display:none">
+
+<label>Transaction Flow</label>
+<select id="flow">
+  <option value="">Select</option>
+  <option value="withdraw">Withdraw</option>
+  <option value="deposit">Deposit</option>
+</select>
+
+<label>Total Amount</label>
+<input type="number" id="totalAmount">
+
+<hr>
+<h3>Payment Split</h3>
+
+<div id="payments"></div>
+
+<button type="button" class="add-btn" onclick="addPayment()">? Add Payment</button>
+
+<div id="cashBox">
+  <h3>Cash Denominations</h3>
+  <div id="denominations"></div>
+</div>
+
+<div class="total">Paid Total: ?<span id="paidTotal">0</span></div>
+
+<button type="submit">Submit</button>
+
+</form>
+
+<script>
+const bankAccounts=["FI","HDFC Old","HDFC New","ICICI","IndusInd","Kotak","RBL","SBI"];
+const creditCards=[
+  "Axis Flipkart","Axis MyZone","Axis Neo",
+  "HDFC PhonePe","HDFC Tata Neu","HDFC Millennia",
+  "HSBC","IDFC First Millenia",
+  "ICICI Amazon","ICICI Coral","ICICI Expressions",
+  "Indusind Plat Aura EDGE","Indusind Legend",
+  "Yes Finbooster","Kotak League","Kotak Image",
+  "SBI BPCL","Standard Chartered"
+];
+const rewards=["PHONEPE","AMAZON","FLIPKART","OTHER"];
+const denoms=[500,200,100,50,20,10,5,2,1];
+
+/* Build denominations */
+denoms.forEach(d=>{
+  denominations.innerHTML+=`
+    <div class="denom">?${d}
+      <input type="number" data-d="${d}" value="0">
+    </div>`;
+});
+
+/* Other fields */
+purpose.onchange=()=>purposeOther.style.display=purpose.value==="Other"?"block":"none";
+spentFor.onchange=()=>spentOther.style.display=spentFor.value==="Other"?"block":"none";
+
+/* Payment row */
+function addPayment(){
+  const div=document.createElement("div");
+  div.className="payment-row";
+  div.innerHTML=`
+    <div class="row">
+      <select class="ptype">
+        <option value="">Type</option>
+        <option>CASH</option>
+        <option>UPI</option>
+        <option>NET</option>
+        <option>DEBIT</option>
+        <option>CREDIT</option>
+        <option>REWARDS</option>
+      </select>
+      <select class="pfrom"></select>
+      <input type="number" class="pamt" placeholder="Amount">
+      <button type="button" class="remove-btn"
+        onclick="this.closest('.payment-row').remove();calc()">?</button>
+    </div>
+    <input class="fromOther" placeholder="Enter source" style="display:none">
+  `;
+  payments.appendChild(div);
+
+  const type=div.querySelector(".ptype");
+  const from=div.querySelector(".pfrom");
+  const amt=div.querySelector(".pamt");
+  const other=div.querySelector(".fromOther");
+
+  type.onchange=()=>{
+    from.innerHTML="<option value=''>From / Account</option>";
+    other.style.display="none";
+
+    /* ?? RESET when switching away from CASH */
+    if(amt.disabled){
+      document.querySelectorAll("[data-d]").forEach(i=>i.value=0);
+    }
+
+    amt.value="";
+    amt.disabled=false;
+    amt.classList.remove("cash-disabled");
+
+    let list=[];
+    if(type.value==="CASH"){
+      from.innerHTML="<option>Cash</option>";
+      amt.value=0;
+      amt.disabled=true;
+      amt.classList.add("cash-disabled");
+      calc();
+      return;
+    }
+
+    if(["UPI","NET","DEBIT"].includes(type.value)) list=bankAccounts;
+    if(type.value==="CREDIT") list=creditCards;
+    if(type.value==="REWARDS") list=rewards;
+
+    list.forEach(v=>from.innerHTML+=`<option>${v}</option>`);
+    calc();
+  };
+
+  from.onchange=()=>other.style.display=from.value==="OTHER"?"block":"none";
+  amt.oninput=calc;
+}
+
+/* Calculate totals */
+function calc(){
+  let total=0;
+  let cashUsed=false;
+
+  document.querySelectorAll(".payment-row").forEach(r=>{
+    const type=r.querySelector(".ptype").value;
+    const amt=r.querySelector(".pamt");
+    if(type==="CASH") cashUsed=true;
+    else total+=Number(amt.value)||0;
+  });
+
+  let cashTotal=0;
+  if(cashUsed){
+    document.querySelectorAll("[data-d]").forEach(i=>{
+      cashTotal+=Number(i.dataset.d)*(Number(i.value)||0);
+    });
+    document.querySelectorAll(".ptype").forEach(p=>{
+      if(p.value==="CASH"){
+        p.closest(".payment-row").querySelector(".pamt").value=cashTotal;
+      }
+    });
+  }
+
+  cashBox.style.display=cashUsed?"block":"none";
+  paidTotal.innerText=total+cashTotal;
+}
+
+document.addEventListener("input",e=>{
+  if(e.target.dataset.d) calc();
+});
+
+/* Default row */
+addPayment();
+
+/* Submit */
+form.onsubmit=async e=>{
+  e.preventDefault();
+
+  if(Number(paidTotal.innerText)!==Number(totalAmount.value)){
+    alert("Split payment total must equal Total Amount");
+    return;
+  }
+
+  const paymentsArr=[];
+  document.querySelectorAll(".payment-row").forEach(r=>{
+    paymentsArr.push({
+      trtype:r.querySelector(".ptype").value,
+      from_to:r.querySelector(".fromOther").style.display==="block"
+        ? r.querySelector(".fromOther").value
+        : r.querySelector(".pfrom").value,
+      amount:r.querySelector(".pamt").value||0
+    });
+  });
+
+  const cash={};
+  document.querySelectorAll("[data-d]").forEach(i=>cash[i.dataset.d]=Number(i.value)||0);
+
+  await fetch("https://hook.eu1.make.com/uayw6m2h1u56gz1fuhnyewvh860q8tjy",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      category:"monthly_transaction",
+      date:date.value,
+      narration:narration.value,
+      bill_no:billNo.value||"",
+      purpose:purpose.value==="Other"?purposeOther.value:purpose.value,
+      spent_for:spentFor.value==="Other"?spentOther.value:spentFor.value,
+      flow_type:flow.value,
+      total_amount:totalAmount.value,
+      payments:paymentsArr,
+      denominations:cash
+    })
+  });
+
+  alert("Transaction saved");
+  form.reset();
+  payments.innerHTML="";
+  document.querySelectorAll("[data-d]").forEach(i=>i.value=0);
+  addPayment();
+  calc();
+};
+</script>
+
+</body>
+</html>
