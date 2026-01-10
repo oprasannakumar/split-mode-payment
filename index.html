@@ -120,13 +120,15 @@ hr{margin:20px 0}
   <div id="denominations"></div>
 </div>
 
-<div class="total">Paid Total: ?<span id="paidTotal">0</span></div>
+<div class="total">Paid Total: ₹<span id="paidTotal">0</span></div>
 
 <button type="submit">Submit</button>
 
 </form>
 
 <script>
+    
+    date.value = new Date().toISOString().split("T")[0];
 const bankAccounts=["FI","HDFC Old","HDFC New","ICICI","IndusInd","Kotak","RBL","SBI"];
 const creditCards=[
   "Axis Flipkart","Axis MyZone","Axis Neo",
@@ -212,7 +214,7 @@ function addPayment(){
     calc();
   };
 
-  from.onchange=()=>other.style.display=from.value==="OTHER"₹"block":"none";
+  from.onchange=()=>other.style.display=from.value==="OTHER"?"block":"none";
   amt.oninput=calc;
 }
 
