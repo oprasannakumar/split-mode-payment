@@ -2,290 +2,360 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Monthly Transaction</title>
+<title>Monthly Transaction (Total Center Alignment)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{font-family:Arial;background:#f5f5f5;padding:20px}
-form{background:#fff;padding:20px;border-radius:8px;max-width:460px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
-label{font-weight:bold;margin-top:10px;display:block}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-/* INPUTS + SELECTS */
-input,select,button{
-  width:100%;
-  height:42px;
-  padding:8px;
-  margin-top:5px;
-  border-radius:4px;
-  border:1px solid #ccc;
-  box-sizing:border-box;
-  background:#fff;
-  color:#000;
-}
+:root{ --h:44px; --r:10px; --b:#d1d5db; --primary: #6366f1; --danger: #ef4444; }
 
-/* ✅ FORCE WHITE DROPDOWNS (FIX GREY ISSUE) */
-select{
-  background-color:#fff !important;
-  color:#000 !important;
-  appearance:none;
-  -webkit-appearance:none;
-  -moz-appearance:none;
-}
+body{ font-family:'Inter', sans-serif; background:linear-gradient(135deg,#eef2f7,#f9fafb); padding:20px; margin:0; min-height: 100vh; }
+form{ background:#fff; max-width:440px; margin:auto; padding:22px; border-radius:16px; box-shadow:0 18px 40px rgba(0,0,0,.08); }
+h3{ text-align:center; margin-bottom:16px; font-weight:600; margin-top:0; color: #1f2937; }
+label{ font-size:13px; font-weight:600; margin-top:14px; display:block; color:#374151; }
 
-/* Android / Chrome internal text fix */
-select option{
-  background:#fff;
-  color:#000;
-}
+input, select, button{ width:100%; height:var(--h); margin-top:6px; padding:0 12px; border-radius:var(--r); border:1px solid var(--b); box-sizing:border-box; font-size:14px; }
+input:focus, select:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(99,102,241,.15); }
+button{ background:var(--primary); color:#fff; border:none; margin-top:22px; font-weight:600; cursor:pointer; transition: 0.2s; }
+button:hover{ filter:brightness(0.9) }
+button:disabled { opacity: 0.7; cursor: not-allowed; }
+.hidden{ display:none !important }
 
-/* Focus state */
-select:focus,
-input:focus{
-  outline:none;
-  border-color:#007bff;
-  background:#fff;
-}
+.cash-wrapper{ border:1px solid #e5e7eb; border-radius:16px; padding:16px; margin-top:16px; background: #f9fafb; }
+.cash-title{ font-weight:600; color:#2563eb; margin-bottom:12px; font-size: 14px; }
+.cash-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.cash-card{ border:1px solid #e5e7eb; border-radius:10px; padding:8px; text-align:center; background: #fff; }
+.cash-card span{ display:block; font-size: 12px; font-weight:600; margin-bottom:4px; color: #6b7280; }
+.cash-card input{ width:100%; height:32px; text-align:center; margin-top: 0; }
 
-/* Disabled */
-select:disabled,
-input:disabled{
-  background:#f0f0f0 !important;
-  color:#000;
-}
+.sync-wrapper { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; }
+#syncIndicator { font-size: 13px; color: #4b5563; font-weight: 500; background: #f3f4f6; padding: 4px 10px; border-radius: 20px; }
+#btnViewQueue { margin-top: 0; width: auto; height: 32px; font-size: 12px; background: #fff; color: #374151; border: 1px solid #d1d5db; padding: 0 15px; }
 
-button{background:#007bff;color:#fff;border:none;margin-top:15px}
-button:hover{background:#0056b3}
-hr{margin:20px 0}
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+.modal-content { background: #fff; width: 95%; max-width: 800px; max-height: 85vh; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding: 12px 20px; }
+.modal-header h4 { margin: 0; color: #111827; font-size: 15px; }
+.close-modal { font-size: 24px; cursor: pointer; color: #9ca3af; }
 
-/* Split rows */
-.payment-row{
-  border:1px solid #ddd;
-  padding:10px;
-  border-radius:6px;
-  margin-top:10px
-}
-.row{
-  display:grid;
-  grid-template-columns: 1.3fr 1.6fr 1fr 42px;
-  gap:6px;
-}
-.remove-btn{
-  background:#dc3545;
-  width:42px;
-  height:42px;
-  padding:0;
-  margin:5px 0 0 0;
-  line-height:42px;
-  font-size:18px;
-}
-.add-btn{background:#28a745}
-.total{font-weight:bold;margin-top:10px;text-align:right}
+.table-container { overflow-x: auto; flex-grow: 1; background: #fff; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 750px; table-layout: fixed; }
 
-/* Cash */
-#cashBox{display:none;margin-top:15px}
-#denominations{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px
-}
-.denom{
-  border:1px solid #ccc;
-  border-radius:6px;
-  padding:8px;
-  text-align:center;
-  font-weight:bold
-}
-.denom input{margin-top:5px;text-align:center;height:36px}
-.cash-disabled{background:#f0f0f0 !important;pointer-events:none}
+th { background: #f8fafc; color: #64748b; font-weight: 600; text-align: center; padding: 12px; border-bottom: 2px solid #e5e7eb; text-transform: uppercase; font-size: 10px; }
+td { padding: 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; color: #374151; text-align: center; line-height: 1.4; }
+tr:hover { background: #f9fafb; }
+
+.col-date { width: 90px; }
+.col-nar { width: auto; font-weight: 600; } 
+.col-pur { width: 100px; }
+.col-mode { width: 140px; }
+.col-amt { width: 110px; }
+.col-act { width: 60px; }
+
+.amt-withdraw { color: #dc2626; font-weight: 700; font-size: 13px; }
+.amt-deposit { color: #16a34a; font-weight: 700; font-size: 13px; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 6px; background: #f3f4f6; color: #4b5563; font-size: 10px; border: 1px solid #e5e7eb; }
+.cash-details { display: block; font-size: 9px; color: #94a3b8; font-style: italic; margin-top: 1px; }
+
+.flex-action { display: flex; align-items: center; justify-content: center; height: 100%; min-height: 40px; }
+.btn-del-mini { background: #fee2e2; color: #ef4444; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: auto; line-height: 1; }
+.btn-del-mini:hover { background: #fecaca; }
+
+.modal-footer { padding: 12px 20px; background: #f8fafc; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; font-weight: 700; font-size: 13px; }
+
+body.dark{ background:#020617; }
+body.dark form, body.dark .modal-content { background:#0f172a; color:#e5e7eb; border-color: #334155; }
+body.dark th { background: #1e293b; color: #94a3b8; border-bottom-color: #334155; }
+body.dark td { border-bottom-color: #334155; color: #cbd5e1; }
 </style>
 </head>
 
 <body>
 
-<form id="form">
-
-<h2 style="text-align:center">Monthly Transaction</h2>
-
-<label>Date</label>
-<input type="date" id="date">
-
-<label>Narration</label>
-<input id="narration">
-
-<label>Bill No (Optional)</label>
-<input id="billNo">
-
-<label>Purpose</label>
-<select id="purpose">
-  <option value="">Select</option>
-  <option>Food</option>
-  <option>Grocery</option>
-  <option>Travel</option>
-  <option>Other</option>
-</select>
-<input id="purposeOther" placeholder="Enter purpose" style="display:none">
-
-<label>Spent For / Earned By</label>
-<select id="spentFor">
-  <option value="">Select</option>
-  <option>Self</option>
-  <option>House</option>
-  <option>Mother</option>
-  <option>Father</option>
-  <option>Family</option>
-  <option>Vasavi</option>
-  <option>Other</option>
-</select>
-<input id="spentOther" placeholder="Enter name" style="display:none">
-
-<label>Transaction Flow</label>
-<select id="flow">
-  <option value="">Select</option>
-  <option value="withdraw">Withdraw</option>
-  <option value="deposit">Deposit</option>
-</select>
-
-<label>Total Amount</label>
-<input type="number" id="totalAmount">
-
-<hr>
-<h3>Payment Split</h3>
-
-<div id="payments"></div>
-
-<button type="button" class="add-btn" onclick="addPayment()">➕ Add Payment</button>
-
-<div id="cashBox">
-  <h3>Cash Denominations</h3>
-  <div id="denominations"></div>
-</div>
-
-<div class="total">Paid Total: ₹<span id="paidTotal">0</span></div>
-
-<button type="submit">Submit</button>
-
+<form id="txnForm">
+  <h3>Monthly Transaction</h3>
+  <label>Date</label>
+  <input type="date" id="date" required>
+  <label>Narration</label>
+  <input type="text" id="narration" required placeholder="Milk, Rent, Salary etc.">
+  <label>Purpose</label>
+  <select id="purpose">
+    <option value="">Select</option>
+    <option>Business</option><option>Donation</option><option>Entertainment</option><option>Food</option><option>Grocery</option><option>Hospital</option><option>House</option><option>Income</option><option>Insurance</option><option>Loan</option><option>Medicines</option><option>Miscellaneous</option><option>Puja</option><option>Tax</option><option>Travelling</option><option>Utility Bills</option><option>Water</option><option>Other</option>
+  </select>
+  <input id="purpose_other" class="hidden" placeholder="Specify purpose">
+  <label>Spent for / Earned by</label>
+  <select id="spent_for">
+    <option value="">Select</option>
+    <option>Self</option><option>House</option><option>Mother</option><option>Father</option><option>Family</option><option>Vasavi</option><option>Other</option>
+  </select>
+  <input id="spent_for_other" class="hidden" placeholder="Specify name">
+  <label>Transaction Flow</label>
+  <select id="flow" required>
+    <option value="">Select</option>
+    <option value="withdraw">Withdraw</option>
+    <option value="deposit">Deposit</option>
+  </select>
+  <label>Transaction Mode</label>
+  <select id="trtype" required>
+    <option value="">Select</option>
+    <option value="CASH">Cash</option><option value="DEBIT">Debit</option><option value="UPI">UPI</option><option value="NET">Net</option><option value="CREDIT">Credit Card</option><option value="REWARDS">Rewards</option>
+  </select>
+  <div id="accountBlock" class="hidden">
+    <label>Account / Card / Platform</label>
+    <select id="account"></select>
+    <input id="account_other" class="hidden" placeholder="Specify Platform" style="margin-top:8px">
+  </div>
+  <div id="cashBlock" class="hidden cash-wrapper">
+    <div class="cash-title">Cash Denominations</div>
+    <div class="cash-grid" id="cashGrid"></div>
+  </div>
+  <div id="withdrawBlock" class="hidden">
+    <label>Withdrawn Amount (₹)</label>
+    <input type="number" id="withdrawn" step="0.01" placeholder="0.00">
+  </div>
+  <div id="depositBlock" class="hidden">
+    <label>Deposit Amount (₹)</label>
+    <input type="number" id="deposit" step="0.01" placeholder="0.00">
+  </div>
+  <button type="submit">Save Transaction</button>
+  <div class="sync-wrapper">
+    <div id="syncIndicator" class="hidden"></div>
+    <button type="button" id="btnViewQueue" class="hidden">View Pending</button>
+  </div>
 </form>
 
-<script>
-date.value=new Date().toISOString().split("T")[0];
-
-const bankAccounts=["FI","HDFC Old","HDFC New","ICICI","IndusInd","Kotak","RBL","SBI"];
-const creditCards=[
-  "Axis Flipkart","Axis MyZone","Axis Neo",
-  "HDFC PhonePe","HDFC Tata Neu","HDFC Millennia",
-  "HSBC","IDFC First Millenia",
-  "ICICI Amazon","ICICI Coral","ICICI Expressions",
-  "Indusind Plat Aura EDGE","Indusind Legend",
-  "Yes Finbooster","Kotak League","Kotak Image",
-  "SBI BPCL","Standard Chartered"
-];
-const rewards=["PHONEPE","AMAZON","FLIPKART","OTHER"];
-const denoms=[500,200,100,50,20,10,5,2,1];
-
-denoms.forEach(d=>{
-  denominations.innerHTML+=`
-    <div class="denom">₹${d}
-      <input type="number" data-d="${d}" value="0">
-    </div>`;
-});
-
-purpose.onchange=()=>purposeOther.style.display=purpose.value==="Other"?"block":"none";
-spentFor.onchange=()=>spentOther.style.display=spentFor.value==="Other"?"block":"none";
-
-function addPayment(){
-  const div=document.createElement("div");
-  div.className="payment-row";
-  div.innerHTML=`
-    <div class="row">
-      <select class="ptype">
-        <option value="">Type</option>
-        <option>CASH</option>
-        <option>UPI</option>
-        <option>NET</option>
-        <option>DEBIT</option>
-        <option>CREDIT</option>
-        <option>REWARDS</option>
-      </select>
-      <select class="pfrom"></select>
-      <input type="number" class="pamt" placeholder="Amount">
-      <button type="button" class="remove-btn" onclick="this.closest('.payment-row').remove();calc()">✖</button>
+<div id="queueModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4>Pending Sync Queue</h4>
+      <span class="close-modal">&times;</span>
     </div>
-    <input class="fromOther" placeholder="Enter source" style="display:none">
-  `;
-  payments.appendChild(div);
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-date">Date</th>
+            <th class="col-nar">Narration</th>
+            <th class="col-pur">Purpose</th>
+            <th class="col-mode">Mode</th>
+            <th class="col-amt">Amount</th>
+            <th class="col-act">Del</th>
+          </tr>
+        </thead>
+        <tbody id="queueTableBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer" id="modalFooter">
+      Net Total: ₹0.00
+    </div>
+  </div>
+</div>
 
-  const type=div.querySelector(".ptype");
-  const from=div.querySelector(".pfrom");
-  const amt=div.querySelector(".pamt");
-  const other=div.querySelector(".fromOther");
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrZ4MX7yWH2mdcDnsoDJ8k1vP-uHYdKV4kJn0I32a2W_6sV7D1iVu3oM-XUynDljeZ/exec";
+let isSubmitting = false;
+const submitBtn = document.querySelector('button[type="submit"]');
 
-  type.onchange=()=>{
-    from.innerHTML="<option value=''>From / Account</option>";
-    other.style.display="none";
+/* Elements */
+const date = document.getElementById("date"), narration = document.getElementById("narration"), purpose = document.getElementById("purpose"), purposeOther = document.getElementById("purpose_other"), spentFor = document.getElementById("spent_for"), spentForOther = document.getElementById("spent_for_other"), flow = document.getElementById("flow"), trtype = document.getElementById("trtype"), accountBlock = document.getElementById("accountBlock"), account = document.getElementById("account"), accountOther = document.getElementById("account_other"), withdrawBlock = document.getElementById("withdrawBlock"), depositBlock = document.getElementById("depositBlock"), withdrawn = document.getElementById("withdrawn"), deposit = document.getElementById("deposit"), cashBlock = document.getElementById("cashBlock"), cashGrid = document.getElementById("cashGrid");
+const syncIndicator = document.getElementById("syncIndicator"), btnViewQueue = document.getElementById("btnViewQueue"), queueModal = document.getElementById("queueModal"), queueTableBody = document.getElementById("queueTableBody"), closeModal = document.querySelector(".close-modal"), modalFooter = document.getElementById("modalFooter");
 
-    if(amt.disabled){
-      document.querySelectorAll("[data-d]").forEach(i=>i.value=0);
-    }
+const bankAccounts = ["FI","HDFC Old","HDFC New","ICICI","IndusInd","Kotak","RBL","SBI"];
+const creditCards = ["Axis Flipkart","Axis MyZone","Axis Neo","HDFC PhonePe","HDFC Tata Neu","HDFC Millennia","HSBC","IDFC First Millenia","ICICI Amazon","ICICI Coral","ICICI Expressions","Indusind Plat Aura EDGE","Indusind Legend","Yes Finbooster","Kotak League","Kotak Image","SBI BPCL","Standard Chartered"];
+const rewardPlatforms = ["Amazon", "Flipkart", "Supermoney", "Payzapp", "MobiKwik", "Tata Neu", "Others"];
+const denoms = [500,200,100,50,20,10,5,2,1];
 
-    amt.value="";
-    amt.disabled=false;
-    amt.classList.remove("cash-disabled");
+/* DB Logic */
+const DB_NAME = "txnQueueDB", STORE_NAME = "queue";
+let db;
+(function initDB(){
+  const req = indexedDB.open(DB_NAME, 1);
+  req.onupgradeneeded = e => e.target.result.createObjectStore(STORE_NAME, { autoIncrement: true });
+  req.onsuccess = e => { db = e.target.result; updatePendingCount(); if(navigator.onLine) syncOffline(); };
+})();
 
-    let list=[];
-    if(type.value==="CASH"){
-      from.innerHTML="<option>Cash</option>";
-      amt.value=0;
-      amt.disabled=true;
-      amt.classList.add("cash-disabled");
-      calc();
-      return;
-    }
-
-    if(["UPI","NET","DEBIT"].includes(type.value)) list=bankAccounts;
-    if(type.value==="CREDIT") list=creditCards;
-    if(type.value==="REWARDS") list=rewards;
-
-    list.forEach(v=>from.innerHTML+=`<option>${v}</option>`);
-    calc();
-  };
-
-  from.onchange=()=>other.style.display=from.value==="OTHER"?"block":"none";
-  amt.oninput=calc;
+function saveOffline(data){
+  if (!db) return;
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  tx.objectStore(STORE_NAME).add(data);
 }
 
-function calc(){
-  let total=0;
-  let cashUsed=false;
+async function updatePendingCount(){
+  if(!db) return;
+  const tx = db.transaction(STORE_NAME, "readonly");
+  const req = tx.objectStore(STORE_NAME).getAll();
+  req.onsuccess = () => {
+    const items = req.result;
+    if (!items.length) { syncIndicator.classList.add("hidden"); btnViewQueue.classList.add("hidden"); return; }
+    syncIndicator.textContent = `⏳ ${items.length} pending`;
+    syncIndicator.classList.remove("hidden"); btnViewQueue.classList.remove("hidden");
+  };
+}
 
-  document.querySelectorAll(".payment-row").forEach(r=>{
-    const type=r.querySelector(".ptype").value;
-    const amt=r.querySelector(".pamt");
-    if(type==="CASH") cashUsed=true;
-    else total+=Number(amt.value)||0;
+function deleteOfflineItem(key) {
+  if(!confirm("Remove from queue?")) return;
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  tx.objectStore(STORE_NAME).delete(key);
+  tx.oncomplete = () => { renderQueueTable(); updatePendingCount(); };
+}
+window.deleteOfflineItem = deleteOfflineItem;
+
+function renderQueueTable() {
+  queueTableBody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:20px;'>Refreshing...</td></tr>";
+  const tx = db.transaction(STORE_NAME, "readonly"), store = tx.objectStore(STORE_NAME), req = store.openCursor();
+  const items = [];
+  req.onsuccess = e => { 
+    const cursor = e.target.result; 
+    if (cursor) { items.push({ key: cursor.key, val: cursor.value }); cursor.continue(); } 
+    else { buildTableHTML(items); } 
+  };
+}
+
+function buildTableHTML(items) {
+  if (items.length === 0) { 
+    queueTableBody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:40px; color:#9ca3af;'>Queue is empty</td></tr>"; 
+    modalFooter.textContent = "Net Total: ₹0.00";
+    return; 
+  }
+  queueTableBody.innerHTML = "";
+  let totalNet = 0;
+  items.forEach(item => {
+    const p = new URLSearchParams(item.val);
+    const wVal = parseFloat(p.get('withdrawn')) || 0;
+    const dVal = parseFloat(p.get('deposit')) || 0;
+    const isWithdraw = wVal > 0;
+    const amt = isWithdraw ? `-${wVal.toFixed(2)}` : `+${dVal.toFixed(2)}`;
+    const amtClass = isWithdraw ? 'amt-withdraw' : 'amt-deposit';
+    totalNet += (dVal - wVal);
+    
+    let cashInfo = "";
+    if(p.get('trtype') === "CASH") {
+      let dStr = [];
+      denoms.forEach(v => { if(p.get('d'+v) > 0) dStr.push(`${v}x${p.get('d'+v)}`); });
+      if(dStr.length) cashInfo = `<span class="cash-details">${dStr.join(', ')}</span>`;
+    }
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="col-date">${p.get('date')}</td>
+      <td class="col-nar">${p.get('narration')}</td>
+      <td class="col-pur"><span class="badge">${p.get('purpose')}</span></td>
+      <td class="col-mode">
+        <div style="font-weight:600">${p.get('trtype')}</div>
+        <div style="font-size:10px; color:#94a3b8">(${p.get('from_to')})</div>
+      </td>
+      <td class="col-amt">
+        <span class="${amtClass}">${amt}</span>
+        ${cashInfo}
+      </td>
+      <td class="col-act">
+        <div class="flex-action">
+          <button type="button" class="btn-del-mini" onclick="deleteOfflineItem(${item.key})">🗑️</button>
+        </div>
+      </td>
+    `;
+    queueTableBody.appendChild(tr);
   });
+  modalFooter.textContent = `Net Total: ₹${totalNet.toFixed(2)}`;
+  modalFooter.style.color = totalNet >= 0 ? "#16a34a" : "#dc2626";
+}
 
-  let cashTotal=0;
-  if(cashUsed){
-    document.querySelectorAll("[data-d]").forEach(i=>{
-      cashTotal+=Number(i.dataset.d)*(Number(i.value)||0);
-    });
-    document.querySelectorAll(".ptype").forEach(p=>{
-      if(p.value==="CASH"){
-        p.closest(".payment-row").querySelector(".pamt").value=cashTotal;
-      }
-    });
+btnViewQueue.onclick = () => { renderQueueTable(); queueModal.classList.remove("hidden"); };
+closeModal.onclick = () => queueModal.classList.add("hidden");
+
+/* Form logic */
+date.value = new Date().toISOString().split("T")[0];
+purpose.onchange = () => purposeOther.classList.toggle("hidden", purpose.value !== "Other");
+spentFor.onchange = () => spentForOther.classList.toggle("hidden", spentFor.value !== "Other");
+account.onchange = () => accountOther.classList.toggle("hidden", account.value !== "Others");
+
+trtype.onchange = () => {
+  account.innerHTML = ""; cashGrid.innerHTML = ""; cashBlock.classList.add("hidden"); 
+  accountOther.classList.add("hidden"); withdrawn.value = deposit.value = "";
+  
+  if (trtype.value === "CASH") { 
+    accountBlock.classList.add("hidden"); cashBlock.classList.remove("hidden"); 
+    withdrawn.readOnly = deposit.readOnly = true; renderCash(); 
+  }
+  else { 
+    accountBlock.classList.remove("hidden"); withdrawn.readOnly = deposit.readOnly = false;
+    let list = [];
+    if(trtype.value === "CREDIT") list = creditCards;
+    else if(trtype.value === "REWARDS") list = rewardPlatforms;
+    else list = bankAccounts;
+    
+    account.add(new Option("Select Platform", ""));
+    list.forEach(a => account.add(new Option(a, a))); 
+  }
+};
+
+flow.onchange = () => { withdrawBlock.classList.add("hidden"); depositBlock.classList.add("hidden"); if (flow.value === "withdraw") { withdrawBlock.classList.remove("hidden"); deposit.value = ""; } if (flow.value === "deposit") { depositBlock.classList.remove("hidden"); withdrawn.value = ""; } };
+
+function renderCash(){
+  cashGrid.innerHTML = ""; denoms.forEach(v => {
+    const c = document.createElement("div"); c.className = "cash-card"; c.innerHTML = `<span>₹${v}</span><input type="number" data-val="${v}" min="0">`;
+    c.querySelector("input").oninput = () => {
+      let total = 0; document.querySelectorAll("#cashGrid input").forEach(i => total += Number(i.value || 0) * Number(i.dataset.val));
+      if (flow.value === "withdraw") withdrawn.value = total; if (flow.value === "deposit") deposit.value = total;
+    };
+    cashGrid.appendChild(c);
+  });
+}
+
+function fullReset(){ document.getElementById("txnForm").reset(); account.innerHTML = ""; accountBlock.classList.add("hidden"); cashBlock.classList.add("hidden"); withdrawBlock.classList.add("hidden"); depositBlock.classList.add("hidden"); purposeOther.classList.add("hidden"); spentForOther.classList.add("hidden"); accountOther.classList.add("hidden"); date.value = new Date().toISOString().split("T")[0]; }
+
+document.getElementById("txnForm").onsubmit = e => {
+  e.preventDefault(); if (isSubmitting) return;
+  
+  // Validation for "Others"
+  let finalFromTo = "";
+  if (trtype.value === "CASH") {
+    finalFromTo = "Cash";
+  } else {
+    if (account.value === "Others" || account.value === "Other") {
+      if (!accountOther.value.trim()) { alert("Please specify the account/platform"); return; }
+      finalFromTo = accountOther.value;
+    } else {
+      finalFromTo = account.value;
+    }
   }
 
-  cashBox.style.display=cashUsed?"block":"none";
-  paidTotal.innerText=total+cashTotal;
+  const params = new URLSearchParams();
+  params.append("category", "monthly transactions"); 
+  params.append("date", date.value); params.append("narration", narration.value); 
+  params.append("purpose", purpose.value === "Other" ? purposeOther.value : purpose.value); 
+  params.append("spent_for", spentFor.value === "Other" ? spentForOther.value : spentFor.value); 
+  params.append("trtype", trtype.value); 
+  params.append("from_to", finalFromTo); 
+  params.append("withdrawn", withdrawn.value || 0); params.append("deposit", deposit.value || 0);
+  if (trtype.value === "CASH") document.querySelectorAll("#cashGrid input").forEach(i => params.append("d" + i.dataset.val, i.value || 0));
+  
+  if (!navigator.onLine) { saveOffline(params.toString()); updatePendingCount(); alert("Saved offline."); fullReset(); return; }
+  
+  isSubmitting = true; submitBtn.disabled = true; submitBtn.textContent = "Syncing...";
+  fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: params })
+  .then(() => { alert("Saved!"); fullReset(); })
+  .catch(() => { saveOffline(params.toString()); updatePendingCount(); alert("Saved Offline."); fullReset(); })
+  .finally(() => { isSubmitting = false; submitBtn.disabled = false; submitBtn.textContent = "Save Transaction"; });
+};
+
+async function syncOffline(){
+  if (!navigator.onLine || !db) return;
+  const tx = db.transaction(STORE_NAME, "readonly");
+  const req = tx.objectStore(STORE_NAME).getAll();
+  req.onsuccess = async () => {
+    const items = req.result; if (!items.length) return;
+    syncIndicator.textContent = "🔄 Syncing " + items.length + "...";
+    for (let body of items) { try { await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body }); } catch { return; } }
+    db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME).clear();
+    syncIndicator.classList.add("hidden"); btnViewQueue.classList.add("hidden");
+  };
 }
 
-document.addEventListener("input",e=>{
-  if(e.target.dataset.d) calc();
-});
-
-addPayment();
+window.addEventListener("online", syncOffline);
+document.body.ondblclick = () => document.body.classList.toggle("dark");
 </script>
-
 </body>
 </html>
