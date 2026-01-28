@@ -2,72 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Monthly Transaction (Total Center Alignment)</title>
+<title>Monthly Transaction (Dark Theme Fixed)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-:root{ --h:44px; --r:10px; --b:#d1d5db; --primary: #6366f1; --danger: #ef4444; }
+:root{ 
+  --h:44px; --r:10px; --b:#d1d5db; --primary: #6366f1; --danger: #ef4444; 
+  --bg-body: linear-gradient(135deg,#eef2f7,#f9fafb);
+  --bg-card: #ffffff;
+  --text-main: #1f2937;
+  --text-label: #374151;
+  --border-color: #d1d5db;
+  --bg-input: #ffffff;
+}
 
-body{ font-family:'Inter', sans-serif; background:linear-gradient(135deg,#eef2f7,#f9fafb); padding:20px; margin:0; min-height: 100vh; }
-form{ background:#fff; max-width:440px; margin:auto; padding:22px; border-radius:16px; box-shadow:0 18px 40px rgba(0,0,0,.08); }
-h3{ text-align:center; margin-bottom:16px; font-weight:600; margin-top:0; color: #1f2937; }
-label{ font-size:13px; font-weight:600; margin-top:14px; display:block; color:#374151; }
+/* Dark Theme Variables */
+body.dark {
+  --bg-body: #0f172a;
+  --bg-card: #1e293b;
+  --text-main: #f8fafc;
+  --text-label: #cbd5e1;
+  --border-color: #334155;
+  --bg-input: #0f172a;
+}
 
-input, select, button{ width:100%; height:var(--h); margin-top:6px; padding:0 12px; border-radius:var(--r); border:1px solid var(--b); box-sizing:border-box; font-size:14px; }
+body{ font-family:'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); padding:20px; margin:0; min-height: 100vh; transition: background 0.3s; }
+form{ background: var(--bg-card); max-width:440px; margin:auto; padding:22px; border-radius:16px; box-shadow:0 18px 40px rgba(0,0,0,.08); border: 1px solid var(--border-color); }
+h3{ text-align:center; margin-bottom:16px; font-weight:600; margin-top:0; color: var(--text-main); }
+label{ font-size:13px; font-weight:600; margin-top:14px; display:block; color: var(--text-label); }
+
+input, select, button{ width:100%; height:var(--h); margin-top:6px; padding:0 12px; border-radius:var(--r); border:1px solid var(--border-color); box-sizing:border-box; font-size:14px; background: var(--bg-input); color: var(--text-main); }
 input:focus, select:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(99,102,241,.15); }
 button{ background:var(--primary); color:#fff; border:none; margin-top:22px; font-weight:600; cursor:pointer; transition: 0.2s; }
 button:hover{ filter:brightness(0.9) }
 button:disabled { opacity: 0.7; cursor: not-allowed; }
 .hidden{ display:none !important }
 
-.cash-wrapper{ border:1px solid #e5e7eb; border-radius:16px; padding:16px; margin-top:16px; background: #f9fafb; }
-.cash-title{ font-weight:600; color:#2563eb; margin-bottom:12px; font-size: 14px; }
+.cash-wrapper{ border:1px solid var(--border-color); border-radius:16px; padding:16px; margin-top:16px; background: var(--bg-input); }
+.cash-title{ font-weight:600; color:#6366f1; margin-bottom:12px; font-size: 14px; }
 .cash-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-.cash-card{ border:1px solid #e5e7eb; border-radius:10px; padding:8px; text-align:center; background: #fff; }
-.cash-card span{ display:block; font-size: 12px; font-weight:600; margin-bottom:4px; color: #6b7280; }
+.cash-card{ border:1px solid var(--border-color); border-radius:10px; padding:8px; text-align:center; background: var(--bg-card); }
+.cash-card span{ display:block; font-size: 12px; font-weight:600; margin-bottom:4px; color: var(--text-label); }
 .cash-card input{ width:100%; height:32px; text-align:center; margin-top: 0; }
 
 .sync-wrapper { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; }
-#syncIndicator { font-size: 13px; color: #4b5563; font-weight: 500; background: #f3f4f6; padding: 4px 10px; border-radius: 20px; }
-#btnViewQueue { margin-top: 0; width: auto; height: 32px; font-size: 12px; background: #fff; color: #374151; border: 1px solid #d1d5db; padding: 0 15px; }
+#syncIndicator { font-size: 13px; color: var(--text-label); font-weight: 500; background: var(--bg-card); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); }
+#btnViewQueue { margin-top: 0; width: auto; height: 32px; font-size: 12px; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 0 15px; }
 
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; justify-content: center; align-items: center; }
-.modal-content { background: #fff; width: 95%; max-width: 800px; max-height: 85vh; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding: 12px 20px; }
-.modal-header h4 { margin: 0; color: #111827; font-size: 15px; }
+/* Modal Dark Fixes */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+.modal-content { background: var(--bg-card); color: var(--text-main); width: 95%; max-width: 800px; max-height: 85vh; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding: 12px 20px; }
 .close-modal { font-size: 24px; cursor: pointer; color: #9ca3af; }
 
-.table-container { overflow-x: auto; flex-grow: 1; background: #fff; }
+.table-container { overflow-x: auto; flex-grow: 1; background: var(--bg-card); }
 table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 750px; table-layout: fixed; }
+th { background: var(--bg-input); color: var(--text-label); font-weight: 600; text-align: center; padding: 12px; border-bottom: 2px solid var(--border-color); text-transform: uppercase; }
+td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); text-align: center; }
+tr:hover { background: rgba(99,102,241, 0.05); }
 
-th { background: #f8fafc; color: #64748b; font-weight: 600; text-align: center; padding: 12px; border-bottom: 2px solid #e5e7eb; text-transform: uppercase; font-size: 10px; }
-td { padding: 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; color: #374151; text-align: center; line-height: 1.4; }
-tr:hover { background: #f9fafb; }
+.amt-withdraw { color: #f87171; font-weight: 700; }
+.amt-deposit { color: #4ade80; font-weight: 700; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--bg-input); color: var(--text-label); font-size: 10px; border: 1px solid var(--border-color); }
+.modal-footer { padding: 12px 20px; background: var(--bg-input); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; font-weight: 700; }
 
-.col-date { width: 90px; }
-.col-nar { width: auto; font-weight: 600; } 
-.col-pur { width: 100px; }
-.col-mode { width: 140px; }
-.col-amt { width: 110px; }
-.col-act { width: 60px; }
-
-.amt-withdraw { color: #dc2626; font-weight: 700; font-size: 13px; }
-.amt-deposit { color: #16a34a; font-weight: 700; font-size: 13px; }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 6px; background: #f3f4f6; color: #4b5563; font-size: 10px; border: 1px solid #e5e7eb; }
-.cash-details { display: block; font-size: 9px; color: #94a3b8; font-style: italic; margin-top: 1px; }
-
-.flex-action { display: flex; align-items: center; justify-content: center; height: 100%; min-height: 40px; }
-.btn-del-mini { background: #fee2e2; color: #ef4444; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: auto; line-height: 1; }
-.btn-del-mini:hover { background: #fecaca; }
-
-.modal-footer { padding: 12px 20px; background: #f8fafc; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; font-weight: 700; font-size: 13px; }
-
-body.dark{ background:#020617; }
-body.dark form, body.dark .modal-content { background:#0f172a; color:#e5e7eb; border-color: #334155; }
-body.dark th { background: #1e293b; color: #94a3b8; border-bottom-color: #334155; }
-body.dark td { border-bottom-color: #334155; color: #cbd5e1; }
+.btn-del-mini { background: #fee2e2; color: #ef4444; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
+body.dark .btn-del-mini { background: #450a0a; color: #f87171; }
 </style>
 </head>
 
@@ -167,7 +169,6 @@ const creditCards = ["Axis Flipkart","Axis MyZone","Axis Neo","HDFC PhonePe","HD
 const rewardPlatforms = ["Amazon", "Flipkart", "Supermoney", "Payzapp", "MobiKwik", "Tata Neu", "Others"];
 const denoms = [500,200,100,50,20,10,5,2,1];
 
-/* DB Logic */
 const DB_NAME = "txnQueueDB", STORE_NAME = "queue";
 let db;
 (function initDB(){
@@ -234,7 +235,7 @@ function buildTableHTML(items) {
     if(p.get('trtype') === "CASH") {
       let dStr = [];
       denoms.forEach(v => { if(p.get('d'+v) > 0) dStr.push(`${v}x${p.get('d'+v)}`); });
-      if(dStr.length) cashInfo = `<span class="cash-details">${dStr.join(', ')}</span>`;
+      if(dStr.length) cashInfo = `<div style="font-size:9px; color:#94a3b8; font-style:italic;">${dStr.join(', ')}</div>`;
     }
 
     const tr = document.createElement("tr");
@@ -251,21 +252,18 @@ function buildTableHTML(items) {
         ${cashInfo}
       </td>
       <td class="col-act">
-        <div class="flex-action">
-          <button type="button" class="btn-del-mini" onclick="deleteOfflineItem(${item.key})">🗑️</button>
-        </div>
+        <button type="button" class="btn-del-mini" onclick="deleteOfflineItem(${item.key})">🗑️</button>
       </td>
     `;
     queueTableBody.appendChild(tr);
   });
   modalFooter.textContent = `Net Total: ₹${totalNet.toFixed(2)}`;
-  modalFooter.style.color = totalNet >= 0 ? "#16a34a" : "#dc2626";
+  modalFooter.style.color = totalNet >= 0 ? "#4ade80" : "#f87171";
 }
 
 btnViewQueue.onclick = () => { renderQueueTable(); queueModal.classList.remove("hidden"); };
 closeModal.onclick = () => queueModal.classList.add("hidden");
 
-/* Form logic */
 date.value = new Date().toISOString().split("T")[0];
 purpose.onchange = () => purposeOther.classList.toggle("hidden", purpose.value !== "Other");
 spentFor.onchange = () => spentForOther.classList.toggle("hidden", spentFor.value !== "Other");
@@ -308,27 +306,15 @@ function fullReset(){ document.getElementById("txnForm").reset(); account.innerH
 
 document.getElementById("txnForm").onsubmit = e => {
   e.preventDefault(); if (isSubmitting) return;
+  let finalFromTo = (trtype.value === "CASH") ? "Cash" : ((account.value === "Others" || account.value === "Other") ? accountOther.value : account.value);
   
-  // Validation for "Others"
-  let finalFromTo = "";
-  if (trtype.value === "CASH") {
-    finalFromTo = "Cash";
-  } else {
-    if (account.value === "Others" || account.value === "Other") {
-      if (!accountOther.value.trim()) { alert("Please specify the account/platform"); return; }
-      finalFromTo = accountOther.value;
-    } else {
-      finalFromTo = account.value;
-    }
-  }
+  if (!finalFromTo && trtype.value !== "CASH") { alert("Please select an account"); return; }
 
   const params = new URLSearchParams();
-  params.append("category", "monthly transactions"); 
-  params.append("date", date.value); params.append("narration", narration.value); 
+  params.append("category", "monthly transactions"); params.append("date", date.value); params.append("narration", narration.value); 
   params.append("purpose", purpose.value === "Other" ? purposeOther.value : purpose.value); 
   params.append("spent_for", spentFor.value === "Other" ? spentForOther.value : spentFor.value); 
-  params.append("trtype", trtype.value); 
-  params.append("from_to", finalFromTo); 
+  params.append("trtype", trtype.value); params.append("from_to", finalFromTo); 
   params.append("withdrawn", withdrawn.value || 0); params.append("deposit", deposit.value || 0);
   if (trtype.value === "CASH") document.querySelectorAll("#cashGrid input").forEach(i => params.append("d" + i.dataset.val, i.value || 0));
   
@@ -347,10 +333,9 @@ async function syncOffline(){
   const req = tx.objectStore(STORE_NAME).getAll();
   req.onsuccess = async () => {
     const items = req.result; if (!items.length) return;
-    syncIndicator.textContent = "🔄 Syncing " + items.length + "...";
     for (let body of items) { try { await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body }); } catch { return; } }
     db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME).clear();
-    syncIndicator.classList.add("hidden"); btnViewQueue.classList.add("hidden");
+    updatePendingCount();
   };
 }
 
