@@ -1111,17 +1111,65 @@ window.addEventListener("load", async () => {
 
   if (urlParams.get("shared") === "true") {
 
-    alert("Shared Param Detected");
+  alert("Shared Param Detected");
 
-    const cache = await caches.open("share-cache");
-    const response = await cache.match("shared-image");
+  const cache = await caches.open("share-cache");
+  const response = await cache.match("shared-image");
 
-    if (response) {
-      alert("Image Found In Cache");
-    } else {
-      alert("No Image In Cache");
-    }
+  if (!response) {
+    alert("No image in cache");
+    return;
   }
+
+  alert("Image Found");
+
+  const file = await response.blob();
+  const reader = new FileReader();
+
+  reader.onload = function () {
+
+    alert("Image Converted To Base64");
+
+    const base64 = reader.result.split(",")[1];
+
+    fetch(IMAGE_PROCESS_URL, {
+      method: "POST",
+      body: JSON.stringify({ image: base64 })
+    })
+    .then(res => res.json())
+    .then(response => {
+
+      alert("Server Response Received");
+
+      if (response.status !== "success") {
+        alert("Extraction failed from server");
+        return;
+      }
+
+      alert("Extraction Success");
+
+      const d = response.data;
+
+      const formattedText =
+`📅 Date: ${d.date}
+👤 Name: ${d.name}
+📝 Msg: ${d.imageMessage}
+💰 Amount: ${d.amount}
+📊 Direction: ${d.direction === "IN" ? "🟢 IN" : "🔴 OUT"}
+⇄ Type: ${d.type}
+🏢 Account: ${d.account}
+🔗 Ref: ${d.refId}`;
+
+      applyAutoFill(formattedText);
+    })
+    .catch(err => {
+      alert("Fetch to IMAGE_PROCESS_URL failed");
+    });
+
+  };
+
+  reader.readAsDataURL(file);
+}
 });
 </script>
 
