@@ -1,6 +1,6 @@
 {
   "name": "Monthly Expenses",
-  "short_name": "Monthly Expenses v3",
+  "short_name": "Monthly Expenses v4",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
