@@ -1,0 +1,28 @@
+{
+  "name": "Monthly Expenses",
+  "short_name": "Expenses",
+  "start_url": "/?share-target",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#fcfcfc",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "receipt",
+          "accept": ["image/*"]
+        }
+      ]
+    }
+  }
+}
