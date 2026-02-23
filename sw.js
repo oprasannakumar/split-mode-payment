@@ -1,4 +1,4 @@
-const CACHE_NAME = 'monthly-expences-v2';
+const CACHE_NAME = 'monthly-expences-v3';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
