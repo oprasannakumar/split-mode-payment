@@ -1092,6 +1092,50 @@ if ('serviceWorker' in navigator) {
         .catch(err => console.log('SW Registration Failed', err));
     });
   }
+// Listen for shared image from service worker
+navigator.serviceWorker.addEventListener('message', async (event) => {
+
+  if (event.data.type === 'SHARED_IMAGE') {
+
+    const base64 = event.data.image.split(",")[1];
+
+    document.getElementById('btnShowAutofill').textContent = "🔍 Processing...";
+
+    fetch(IMAGE_PROCESS_URL, {
+      method: "POST",
+      body: JSON.stringify({ image: base64 })
+    })
+    .then(res => res.json())
+    .then(response => {
+
+      document.getElementById('btnShowAutofill').textContent = "✨ Use Receipt Auto-Fill";
+
+      if (response.status !== "success") {
+        alert("Extraction failed");
+        return;
+      }
+
+      const d = response.data;
+
+      const formattedText =
+`📅 Date: ${d.date}
+👤 Name: ${d.name}
+📝 Msg: ${d.imageMessage}
+💰 Amount: ${d.amount}
+📊 Direction: ${d.direction === "IN" ? "🟢 IN" : "🔴 OUT"}
+⇄ Type: ${d.type}
+🏢 Account: ${d.account}
+🔗 Ref: ${d.refId}`;
+
+      applyAutoFill(formattedText);
+
+    })
+    .catch(() => {
+      document.getElementById('btnShowAutofill').textContent = "✨ Use Receipt Auto-Fill";
+      alert("Upload failed");
+    });
+  }
+});
 </script>
 
 </body>
