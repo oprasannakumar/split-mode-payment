@@ -1,7 +1,8 @@
 {
   "name": "Monthly Expenses",
   "short_name": "Expenses",
-  "start_url": "/?share-target",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#fcfcfc",
@@ -13,7 +14,7 @@
     }
   ],
   "share_target": {
-    "action": "/",
+    "action": "./index.html",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {
