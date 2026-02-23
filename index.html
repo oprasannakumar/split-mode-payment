@@ -1087,12 +1087,22 @@ createPaymentRow();
 <script>
   // Register the Service Worker
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(reg => console.log('Service Worker registered!', reg))
-        .catch(err => console.log('Service Worker failed:', err));
-    });
-  }
+  window.addEventListener('load', async () => {
+
+    try {
+      const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+
+      // 🔥 CRITICAL FIX: force reload so SW controls page
+      if (!navigator.serviceWorker.controller) {
+        window.location.reload();
+      }
+
+    } catch (err) {
+      console.log('Service Worker failed:', err);
+    }
+
+  });
+}
 window.addEventListener("load", async () => {
   const urlParams = new URLSearchParams(window.location.search);
 
