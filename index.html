@@ -1085,70 +1085,13 @@ document.getElementById('date').value = new Date().toISOString().split("T")[0];
 createPaymentRow();
 </script>
 <script>
-  // Register the Service Worker
-  if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-
-    try {
-      const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-
-      // 🔥 CRITICAL FIX: force reload so SW controls page
-      if (!navigator.serviceWorker.controller) {
-        window.location.reload();
-      }
-
-    } catch (err) {
-      console.log('Service Worker failed:', err);
-    }
-
-  });
-}
-window.addEventListener("load", async () => {
-
-  alert("App Loaded");
-
-  const urlParams = new URLSearchParams(window.location.search);
-
-  if (urlParams.get("shared") === "true") {
-
-  const cache = await caches.open("share-cache");
-  const response = await cache.match("shared-image");
-  if (!response) return;
-
-  const file = await response.blob();
-
-  const formData = new FormData();
-  formData.append("image", file);
-
-  fetch(IMAGE_PROCESS_URL, {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(response => {
-
-    if (response.status !== "success") return;
-
-    const d = response.data;
-
-    const formattedText =
-`📅 Date: ${d.date}
-👤 Name: ${d.name}
-📝 Msg: ${d.imageMessage}
-💰 Amount: ${d.amount}
-📊 Direction: ${d.direction === "IN" ? "🟢 IN" : "🔴 OUT"}
-⇄ Type: ${d.type}
-🏢 Account: ${d.account}
-🔗 Ref: ${d.refId}`;
-
-    applyAutoFill(formattedText);
-
-  })
-  .catch(() => {
-    alert("Image processing failed");
-  });
-}
-});
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('SW Registered'))
+        .catch(err => console.log('SW Registration Failed', err));
+    });
+  }
 </script>
 
 </body>
