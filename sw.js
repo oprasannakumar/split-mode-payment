@@ -30,15 +30,20 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // ✅ Intercept share BEFORE GitHub handles it
-  if (event.request.method === "POST" && url.pathname.endsWith('/share')) {
+  // 🔥 IMPORTANT: intercept share-target POST
+  if (event.request.method === "POST" &&
+      url.search.includes("share-target")) {
+
     event.respondWith(handleShareTarget(event.request));
     return;
   }
 
+  // Navigation fallback
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match('./index.html'))
+      fetch(event.request).catch(() =>
+        caches.match('./index.html')
+      )
     );
     return;
   }
@@ -49,7 +54,6 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
 
 // 🔹 SHARE HANDLER
 async function handleShareTarget(request) {
