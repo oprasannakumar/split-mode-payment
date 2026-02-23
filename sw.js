@@ -30,18 +30,12 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // ✅ Allow Google Script calls normally
-  if (url.href.includes('script.google.com')) {
-    return;
-  }
-
-  // ✅ HANDLE SHARE TARGET (image shared from Android)
-  if (event.request.method === "POST") {
+  // ✅ Intercept share BEFORE GitHub handles it
+  if (event.request.method === "POST" && url.pathname.endsWith('/share')) {
     event.respondWith(handleShareTarget(event.request));
     return;
   }
 
-  // ✅ Navigation fallback (fixes 404 when installed)
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => caches.match('./index.html'))
@@ -49,7 +43,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ✅ Normal caching
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
