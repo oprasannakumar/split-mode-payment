@@ -3338,18 +3338,30 @@
             renderUpcomingRecurring();
         }
 
-        function renderUpcomingRecurring() {
+                function renderUpcomingRecurring() {
             const list = JSON.parse(localStorage.getItem("recurringTemplates") || "[]");
             const preview = document.getElementById("recurringPreview");
             const todayDate = new Date();
             todayDate.setHours(0, 0, 0, 0);
+            
             const dueTemplates = list.map((t, index) => ({ ...t, originalIndex: index }))
-                .filter(t => { if (!t.active || !t.date) return false;
+                .filter(t => { 
+                    if (!t.active || !t.date) return false;
                     const dueDate = new Date(t.date);
-                    dueDate.setHours(0, 0, 0, 0); return dueDate <= todayDate; });
+                    dueDate.setHours(0, 0, 0, 0); 
+                    return dueDate <= todayDate; 
+                });
+                
             if (dueTemplates.length === 0) { preview.classList.add("hidden"); return; }
+            
             preview.classList.remove("hidden");
-            let html = `<div style="font-weight:700;margin-bottom:8px;color:var(--primary);font-size:13px;display:flex;align-items:center;gap:5px;"><span>⏳ Due Today</span></div>`;
+            
+            // Added space-between and a dismiss (✕) button here
+            let html = `<div style="font-weight:700;margin-bottom:8px;color:var(--primary);font-size:13px;display:flex;align-items:center;justify-content:space-between;">
+                          <span>⏳ Due Today</span>
+                          <span style="cursor:pointer;color:var(--text-label);font-size:16px;line-height:1;padding:0 4px;" title="Dismiss" onclick="document.getElementById('recurringPreview').classList.add('hidden')">✕</span>
+                        </div>`;
+                        
             dueTemplates.forEach(t => {
                 let amt = "0.00", acc = "";
                 if (t.split_enabled) {
@@ -3373,8 +3385,13 @@
                 </div>
               </div>`;
             });
+            
             preview.innerHTML = html;
+
+            // To automatically clear the notification after 2 seconds, uncomment the line below:
+            // setTimeout(() => { preview.classList.add("hidden"); }, 2000);
         }
+
 
         function loadRecurring(index) {
             const templates = JSON.parse(localStorage.getItem("recurringTemplates") || "[]");
