@@ -15,7 +15,7 @@
     
     :root {
       * { -webkit-tap-highlight-color: transparent; }
-      --h: 44px;
+      --h: 38px;
       --r: 12px;
       --primary: #10b981;
       --primary-hover: #059669;
@@ -53,7 +53,7 @@
       background: var(--bg-body);
       background-attachment: fixed;
       color: var(--text-main);
-      padding: 15px;
+      padding: 8px;
       margin: 0;
       min-height: 100vh;
       transition: background 0.5s ease, color 0.5s ease;
@@ -65,7 +65,7 @@
       -webkit-backdrop-filter: blur(16px);
       max-width: 420px;
       margin: auto;
-      padding: 22px;
+      padding: 16px;
       border-radius: 20px;
       box-shadow: 0 20px 40px var(--shadow-color), inset 0 1px 0 var(--glass-border);
       border: 1px solid var(--border-color);
@@ -100,7 +100,7 @@
       display: grid;
       grid-template-columns: 40px 1fr 80px;
       align-items: center;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
       margin-top: -5px;
     }
 
@@ -272,10 +272,10 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
     .mode-btn {
-      padding: 10px 0;
+      padding: 6px 0;
       border-radius: 14px;
       background: var(--bg-input);
       border: 1px solid var(--border-color);
@@ -305,18 +305,19 @@
     #splitModeBtn.active .icon-shape { filter: drop-shadow(0px 0px 5px var(--danger)); transform: scale(1.15); }
     .mode-btn:active { transform: scale(0.93); }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; align-items: start; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: start; }
     label { 
-      font-size: 11px; 
+      font-size: 10.5px; 
       font-weight: 700; 
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-top: 14px; 
-      margin-bottom: 6px; 
+      margin-top: 10px; 
+      margin-bottom: 4px; 
       display: block; 
       color: var(--text-label); 
       transition: color 0.5s ease; 
     }
+
     input, select, button { 
       width: 100%; 
       height: var(--h); 
@@ -349,7 +350,7 @@
 
     .smart-row { display: block; width: 100%; }
     .smart-row.has-other { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; }
-    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
 
     button[type="submit"], .btn-confirm { 
       background: linear-gradient(135deg, var(--primary), var(--primary-hover)); 
@@ -391,12 +392,28 @@
     #btnViewQueue { background: #64748b; color: white; }
     body.dark #btnViewQueue { background: #334155; }
 
-    .payment-row-wrapper { margin-bottom: 12px; border-bottom: 1px dashed var(--border-color); padding-bottom: 14px; }
+    .payment-row-wrapper { 
+      margin-bottom: 8px; 
+      border-bottom: 1px dashed var(--border-color); 
+      padding-bottom: 10px; 
+    }
+
     .payment-row { display: grid; grid-template-columns: 1fr 1.2fr 80px; gap: 8px; align-items: end; }
     .btn-add-mode { background: rgba(6, 182, 212, 0.12); color: var(--secondary); border: 1px solid var(--secondary); font-size: 11px; font-weight: 700; height: 28px; cursor: pointer; border-radius: 8px; width: auto; padding: 0 12px; margin: 0; transition: all 0.2s ease; }
     .btn-add-mode:hover { background: var(--secondary); color: white; }
 
-    .total-wrapper { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding: 12px 16px; background: var(--bg-input); border-radius: 14px; border: 1px solid var(--border-color); transition: background 0.5s ease; box-shadow: inset 0 2px 4px var(--shadow-color); }
+    .total-wrapper { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-top: 10px; 
+      padding: 10px 16px; 
+      background: var(--bg-input); 
+      border-radius: 14px; 
+      border: 1px solid var(--border-color); 
+      transition: background 0.5s ease; 
+      box-shadow: inset 0 2px 4px var(--shadow-color); 
+    }
     
     .cash-wrapper { border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; margin-top: 14px; background: var(--bg-input); transition: background 0.5s ease; }
     .cash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -464,8 +481,8 @@
     .saving-text { animation: blink 1s infinite; }
     .hidden { display: none !important }
 
-    .receipt-flex { display: flex; align-items: stretch; gap: 10px; margin: 14px 0; }
-    .receipt-flex button, .receipt-flex label { flex: 1; margin: 0 !important; height: 38px; border-radius: var(--r); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
+    .receipt-flex { display: flex; align-items: stretch; gap: 10px; margin: 10px 0; }
+    .receipt-flex button, .receipt-flex label { flex: 1; margin: 0 !important; height: 34px; border-radius: var(--r); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
     .receipt-flex label { flex: 0 0 42px; }
     #btnShowAutofill { background: rgba(16, 185, 129, 0.12); color: var(--primary); border: 1px dashed var(--primary); }
     #btnShowAutofill:hover { background: rgba(16, 185, 129, 0.22); }
@@ -2674,12 +2691,17 @@
             toggleSmartOther(spentForSelect, 'spent_for_other', 'spentSmartRow', true);
         }
 
-        function checkRecurringTemplates() {
+                async function checkRecurringTemplates() {
             const today = new Date();
             const templates = JSON.parse(localStorage.getItem("recurringTemplates") || "[]");
             const todayTemplates = templates.filter(t => t.active && new Date(t.date).getDate() === today.getDate() && new Date(t.date).getMonth() === today.getMonth());
+            
             if (todayTemplates.length === 0) return;
-            if (!confirm(`You have ${todayTemplates.length} recurring transactions today.\nLoad them?`)) return;
+            
+            // Replaced native confirm() with the custom UI showConfirm()
+            const shouldLoad = await showConfirm(`You have ${todayTemplates.length} recurring transactions today.\nLoad them?`);
+            if (!shouldLoad) return;
+            
             document.getElementById("paymentContainer").innerHTML = "";
             todayTemplates.forEach(t => {
                 document.getElementById("narration").value = t.narration;
@@ -2693,6 +2715,7 @@
             });
             updateGrandTotal();
         }
+
 
         function predictPurposeSmart(text) {
             const words = text.toLowerCase().split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.includes(w));
